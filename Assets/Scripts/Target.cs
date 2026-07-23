@@ -37,19 +37,22 @@ public class Target : MonoBehaviour
     /// </summary>
     private void OnMouseDown()
     {
-        if (Mouse.current.leftButton.wasPressedThisFrame)
+        if (gameManager.IsGameActive)
         {
-            Debug.Log("Mouse was clicked");
-            Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
-            Debug.DrawRay(ray.origin, ray.direction * 100f, Color.red, 2f);
-            if (Physics.Raycast(ray, out RaycastHit hit))
+            if (Mouse.current.leftButton.wasPressedThisFrame)
             {
-                // If ray hits this enemy, destroy it
-                if (hit.transform == transform)
+                Debug.Log("Mouse was clicked");
+                Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
+                Debug.DrawRay(ray.origin, ray.direction * 100f, Color.red, 2f);
+                if (Physics.Raycast(ray, out RaycastHit hit))
                 {
-                    Destroy(gameObject);
-                    Instantiate(ExplosionParticle, transform.position, ExplosionParticle.transform.rotation);
-                    gameManager.UpdateScore(PointValue);
+                    // If ray hits this enemy, destroy it
+                    if (hit.transform == transform)
+                    {
+                        Destroy(gameObject);
+                        Instantiate(ExplosionParticle, transform.position, ExplosionParticle.transform.rotation);
+                        gameManager.UpdateScore(PointValue);
+                    }
                 }
             }
         }
@@ -75,6 +78,10 @@ public class Target : MonoBehaviour
         if (other.CompareTag("DestroyZone"))
         {
             Destroy(gameObject);
+            if (!gameObject.CompareTag("Bad"))
+            {
+                gameManager.GameOver();
+            }
         }
     }
 }
